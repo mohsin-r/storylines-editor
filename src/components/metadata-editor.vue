@@ -594,7 +594,7 @@ import {
 import { VueSpinnerOval } from 'vue3-spinners';
 import { VueFinalModal } from 'vue-final-modal';
 import { useUserStore } from '../stores/userStore';
-import { computed } from "vue";
+import { computed } from 'vue';
 
 import JSZip from 'jszip';
 import axios from 'axios';
@@ -763,7 +763,7 @@ export default class MetadataEditorV extends Vue {
         // Initialize Storylines config and the configuration structure.
         this.configs = { en: undefined, fr: undefined };
         this.configFileStructure = undefined;
-        
+
         // set any metadata default values for creating new product
         if (!this.loadExisting) {
             // set current date as default
@@ -856,7 +856,7 @@ export default class MetadataEditorV extends Vue {
 
     handleSessionTimeout(): void {
         // We prompt the user to extend the session when session warn minutes have passed.
-        const warnTime = import.meta.env.VITE_APP_CURR_ENV ? Number(import.meta.env.VITE_SESSION_WARN) : 5;
+        const warnTime = import.meta.env.VITE_APP_CURR_ENV ? Number(import.meta.env.VITE_SESSION_WARN) : 1;
         this.lockStore.confirmationTimeout = setTimeout(() => {
             // First, remove inactivity event listeners, otherwise moving the mouse will extend the session!.
             document.onmousemove = () => undefined;
