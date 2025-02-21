@@ -598,7 +598,7 @@ const clients = new Set();
 function broadcastToClients(message) {
     const payload = JSON.stringify(message);
     clients.forEach((client) => {
-        if (client.readyState === 1) {
+        if (client.readyState === (process.env.SERVER_CURR_ENV !== '#{CURR_ENV}#' ? WebSocket.OPEN : 1)) {
             logger('INFO', `Payload sent to the client`);
             client.send(payload);
         }
@@ -639,10 +639,10 @@ wss.on('connection', (ws) => {
                 ws.uuid = uuid;
                 ws.send(JSON.stringify({ status: 'success', secret }));
 
-                broadcastToClients({
+                /* broadcastToClients({
                     type: 'lock',
                     uuid
-                });
+                }); */
             }
         } else {
             // Attempting to unlock a different storyline, other than the one this connection has locked, so do not allow.
@@ -662,10 +662,10 @@ wss.on('connection', (ws) => {
                 delete ws.uuid;
                 ws.send(JSON.stringify({ status: 'success' }));
 
-                broadcastToClients({
+                /* broadcastToClients({
                     type: 'unlock',
                     uuid
-                });
+                }); */
             }
         }
     });
@@ -678,10 +678,10 @@ wss.on('connection', (ws) => {
             if (currentLock) {
                 logger('INFO', `Releasing lock on storyline ${ws.uuid} after connection closed`);
                 delete lockedUuids[ws.uuid];
-                broadcastToClients({
+                /* broadcastToClients({
                     type: 'unlock',
                     uuid: ws.uuid
-                });
+                }); */
             }
         }
 

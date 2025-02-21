@@ -50,7 +50,6 @@ export const useLockStore = defineStore('lock', {
 
             return new Promise((resolve, reject) => {
                 this.received = false;
-                this.socket?.send(JSON.stringify({ uuid, lock: true }));
 
                 const handleMessage = (event: MessageEvent) => {
                     const data = JSON.parse(event.data);
@@ -72,6 +71,7 @@ export const useLockStore = defineStore('lock', {
                 };
 
                 this.socket!.addEventListener('message', handleMessage);
+                this.socket?.send(JSON.stringify({ uuid, lock: true }));
             });
         },
         // Unlocks the curent storyline for this user. Only to be called on session end.
