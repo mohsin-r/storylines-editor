@@ -614,6 +614,12 @@ wss.on('connection', (ws) => {
     // { uuid: <uuid>, lock: false }
     ws.on('message', function (msg) {
         const message = JSON.parse(msg);
+
+        if (message.status === 'nonsense') {
+            ws.send(JSON.stringify({ status: 'nonsense' }));
+            return;
+        }
+
         const { uuid, lock } = message;
 
         if (!uuid) {

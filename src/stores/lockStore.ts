@@ -35,6 +35,19 @@ export const useLockStore = defineStore('lock', {
                     this.received = true;
                     this.result = res;
                 };
+
+                this.socket.onerror = () => {
+                    console.log('Socket connection errored!');
+                };
+
+                const msgSpam = setInterval(() => {
+                    this.socket?.send(JSON.stringify({ status: 'nonsense' }));
+                }, 30000);
+
+                window.addEventListener('beforeunload', () => {
+                    clearInterval(msgSpam);
+                    this.socket?.close();
+                });
             });
         },
         // Attempts to lock a storyline for this user.
@@ -53,6 +66,10 @@ export const useLockStore = defineStore('lock', {
 
                 const handleMessage = (event: MessageEvent) => {
                     const data = JSON.parse(event.data);
+
+                    if (data.status === 'nonsense') {
+                        return;
+                    }
 
                     if (data !== undefined) {
                         if (data.status === 'fail') {
@@ -86,13 +103,13 @@ export const useLockStore = defineStore('lock', {
         },
         // Resets the current session back to a full 30 minutes.
         resetSession(overrideTime?: number) {
+            clearInterval(this.timeInterval);
             this.timeRemaining =
                 overrideTime !== undefined
                     ? overrideTime
                     : import.meta.env.VITE_APP_CURR_ENV
                     ? Number(import.meta.env.VITE_SESSION_END) * 60
-                    : 1800; //  This value is in seconds!!! Don't mix up the units!!!
-            clearInterval(this.timeInterval);
+                    : 300; //  This value is in seconds!!! Don't mix up the units!!!
             // Update the time remaining every second.
             this.timeInterval = setInterval(() => {
                 if (this.timeRemaining === 0) {
